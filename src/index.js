@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import { corsOptions } from "./utils/cors.utlis.js";
 import learningModuleRoutes from "./routes/learningModules.routes.js";
+import verifyToken from "./middlewares/verifyToken.middlewares.js";
 
 const app = express();
 app.use(cors(corsOptions));
@@ -12,7 +13,7 @@ app.use(cors(corsOptions));
 app.use(morgan("combined"));
 app.use(express.json());
 app.use("/api/auth", authRouter);
-app.use("api/v1/learning-modules", learningModuleRoutes);
+app.use("/api/v1/learning-modules", verifyToken, learningModuleRoutes);
 app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000;

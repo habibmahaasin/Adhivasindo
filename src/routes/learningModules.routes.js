@@ -8,10 +8,10 @@ import {
 import express from "express";
 
 const learningModuleRoutes = express.Router();
-learningModuleRoutes.post("/learning-modules", createLearningModule);
-learningModuleRoutes.get("/learning-modules", getLearningModules);
-learningModuleRoutes.get("/learning-modules/:id", getLearningModuleById);
-learningModuleRoutes.put("/learning-modules/:id", updateLearningModule);
-learningModuleRoutes.delete("/learning-modules/:id", deleteLearningModule);
+learningModuleRoutes.post("/", createLearningModule);
+learningModuleRoutes.get("/", getLearningModules);
+learningModuleRoutes.get("/:id", getLearningModuleById);
+learningModuleRoutes.put("/:id", updateLearningModule);
+learningModuleRoutes.delete("/:id", deleteLearningModule);
 
 export default learningModuleRoutes;
