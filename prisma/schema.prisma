@@ -15,6 +15,7 @@ model User {
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   learningModules  LearningModule[] // One user can create many learning modules
+  competences      Competence[]     // One user can own many competences
 }
 
 model LearningModule {
@@ -25,15 +26,17 @@ model LearningModule {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   user        User         @relation(fields: [userId], references: [id]) // One learning module is created by one user
-  competitions Competition[] // One learning module can have many competitions
+  competences Competence[] // One learning module can have many competences
 }
 
-model Competition {
-  id              String            @id @default(uuid())
+model Competence {
+  id              String         @id @default(uuid())
   name            String
   description     String
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
   learningModuleId String
-  learningModule LearningModule    @relation(fields: [learningModuleId], references: [id]) // One competition belongs to one learning module
+  learningModule  LearningModule @relation(fields: [learningModuleId], references: [id])
+  userId          String         // Foreign key for the competence owner
+  user            User           @relation(fields: [userId], references: [id]) // One competence is owned by one user
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }

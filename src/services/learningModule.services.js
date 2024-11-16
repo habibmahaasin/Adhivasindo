@@ -7,7 +7,13 @@ const CreateLearningModule = async (learningModule) => {
 
   return newLearningModule;
 };
-const GetLearningModules = async ({ search, limit, offset }) => {
+
+const GetLearningModules = async ({
+  search,
+  limit,
+  offset,
+  showCompetency,
+}) => {
   try {
     const where = search
       ? {
@@ -18,10 +24,13 @@ const GetLearningModules = async ({ search, limit, offset }) => {
         }
       : {};
 
+    const include = showCompetency ? { competences: true } : {};
+
     const modules = await prisma.learningModule.findMany({
       where,
       take: limit,
       skip: offset,
+      include,
     });
 
     const totalCount = await prisma.learningModule.count({
@@ -30,17 +39,28 @@ const GetLearningModules = async ({ search, limit, offset }) => {
 
     return { modules, totalCount };
   } catch (error) {
-    console.error(error);
+    console.error("Error details:", error);
     throw new Error("Error fetching learning modules");
   }
 };
 
-const GetLearningModuleById = async (id) => {
-  const learningModule = await prisma.learningModule.findUnique({
-    where: { id },
-  });
+const GetLearningModuleByIdService = async (id, showCompetency) => {
+  try {
+    const include = showCompetency ? { competences: true } : {};
+    const learningModule = await prisma.learningModule.findUnique({
+      where: { id },
+      include,
+    });
 
-  return learningModule;
+    if (!learningModule) {
+      throw new Error(`Learning Module with ID ${id} not found`);
+    }
+
+    return learningModule;
+  } catch (error) {
+    console.error("Error fetching learning module:", error);
+    throw new Error("Error fetching learning module by ID");
+  }
 };
 
 const UpdateLearningModule = async (id, { title, description, userId }) => {
@@ -82,7 +102,7 @@ const DeleteLearningModule = async (id) => {
 export {
   CreateLearningModule,
   GetLearningModules,
-  GetLearningModuleById,
+  GetLearningModuleByIdService,
   UpdateLearningModule,
   DeleteLearningModule,
 };

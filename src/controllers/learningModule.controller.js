@@ -1,9 +1,9 @@
 import {
   CreateLearningModule,
   GetLearningModules,
-  GetLearningModuleById,
   UpdateLearningModule,
   DeleteLearningModule,
+  GetLearningModuleByIdService,
 } from "../services/learningModule.services.js";
 import { sendResponse, sendError } from "../utils/apiResponse.utils.js";
 
@@ -36,9 +36,15 @@ const createLearningModule = async (req, res) => {
 
 const getLearningModules = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      show_competency = "false",
+    } = req.query;
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
+    const showCompetency = show_competency === "true";
 
     if (pageNumber <= 0 || limitNumber <= 0) {
       return sendError(res, 400, "Page and limit must be positive integers");
@@ -49,7 +55,9 @@ const getLearningModules = async (req, res) => {
       search,
       limit: limitNumber,
       offset,
+      showCompetency,
     });
+
     const totalPages = Math.ceil(totalCount / limitNumber);
     return sendResponse(res, 200, "Learning modules fetched successfully", {
       modules,
@@ -66,9 +74,14 @@ const getLearningModules = async (req, res) => {
 
 const getLearningModuleById = async (req, res) => {
   const { id } = req.params;
+  const { show_competency = "false" } = req.query;
+  const showCompetency = show_competency === "true";
 
   try {
-    const learningModule = await GetLearningModuleById(id);
+    const learningModule = await GetLearningModuleByIdService(
+      id,
+      showCompetency
+    );
 
     if (!learningModule) {
       return sendError(res, 404, "Learning module not found");
