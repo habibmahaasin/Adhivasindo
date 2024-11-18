@@ -31,6 +31,9 @@ const GetLearningModules = async ({
       take: limit,
       skip: offset,
       include,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     const totalCount = await prisma.learningModule.count({
